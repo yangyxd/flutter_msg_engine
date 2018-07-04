@@ -10,7 +10,7 @@ int SMsgId = 999;
 int SMsgRef = 0;
 
 // Use MsgProcessHandler process message.
-class MyApp extends StatefulWidget implements MsgProcessHandler<String> {
+class MyApp extends StatefulWidget implements MsgProcHandler<String> {
 
   @override
   _MyAppState createState() {
@@ -95,7 +95,7 @@ class MyHomePage extends StatefulWidget {
   createState() => new _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> implements MsgProcessHandler<String> {
+class _MyHomePageState extends State<MyHomePage> implements MsgProcHandler<String> {
   int _msgid;
   String _msg;
 

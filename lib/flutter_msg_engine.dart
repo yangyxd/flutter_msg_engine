@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 
-typedef MsgProcessHandlerCallBack<T>(MsgPack<T> msg);
+typedef MsgProcHandlerCallBack<T>(MsgPack<T> msg);
 
 /// 消息包接口
 abstract class MsgPack<T> {
@@ -19,13 +19,13 @@ abstract class MsgPack<T> {
 }
 
 /// 消息处理器接口
-abstract class MsgProcessHandler<T> {
+abstract class MsgProcHandler<T> {
   /// 处理消息
   void processMsg(MsgPack<T> msg);
 }
 
 /// 消息处理器接口
-abstract class MsgHandler extends MsgProcessHandler {
+abstract class MsgHandler extends MsgProcHandler {
   /// 已经注册过的消息ID
   List<int> get msgIds;
 
@@ -107,7 +107,7 @@ class MsgHandlerBase implements MsgHandler {
   final owner;
 
   /// 消息处理回调
-  final MsgProcessHandler onProcessMsg;
+  final MsgProcHandler onProcessMsg;
 
   MsgHandlerBase({this.owner, List<int> msgIds, this.onProcessMsg}) {
     this._msgIds == msgIds;
@@ -181,15 +181,15 @@ class MsgHandlerBase implements MsgHandler {
 
 /// 消息处理器 （回调方式）
 class MsgHandlerEvent extends MsgHandlerBase {
-  final Map<int, MsgProcessHandlerCallBack> _eventList =
-  new Map<int, MsgProcessHandlerCallBack>();
+  final Map<int, MsgProcHandlerCallBack> _eventList =
+  new Map<int, MsgProcHandlerCallBack>();
 
   MsgHandlerEvent({owner, List<int> msgIds})
       : super(owner: owner, msgIds: msgIds);
 
   @override
   void processMsg(MsgPack msg) {
-    MsgProcessHandlerCallBack callback = _eventList[msg.msgId];
+    MsgProcHandlerCallBack callback = _eventList[msg.msgId];
     if (callback != null) callback(msg);
   }
 }
@@ -217,8 +217,8 @@ class MsgEngine {
     return _instance;
   }
 
-  final Map<int, List<MsgProcessHandler>> _msgHandlerMap =
-  new Map<int, List<MsgProcessHandler>>();
+  final Map<int, List<MsgProcHandler>> _msgHandlerMap =
+  new Map<int, List<MsgProcHandler>>();
   final Queue<MsgPack> _msgQueue = new Queue<MsgPack>();
 
   /// 是否暂停
@@ -298,7 +298,7 @@ class MsgEngine {
           MsgPack msg = _msgQueue.first;
           try {
             _msgQueue.removeFirst();
-            List<MsgProcessHandler> o = _msgHandlerMap[msg.msgId];
+            List<MsgProcHandler> o = _msgHandlerMap[msg.msgId];
             if (o != null && o.length > 0) sendMsgToHandler(o, msg);
           } catch (e) {
             _log(e.toString());
@@ -320,7 +320,7 @@ class MsgEngine {
     if (onLog != null) onLog(this, msg);
   }
 
-  void sendMsgToHandler(List<MsgProcessHandler> handler, MsgPack msg) {
+  void sendMsgToHandler(List<MsgProcHandler> handler, MsgPack msg) async {
     for (int i = 0; i < handler.length; i++) {
       try {
         handler[i].processMsg(msg);
@@ -343,7 +343,7 @@ class MsgEngine {
   }
 
   /// 获取指定MsgID的消息处理器链表
-  List<MsgProcessHandler> getHandlerList(int msgId) {
+  List<MsgProcHandler> getHandlerList(int msgId) {
     return _msgHandlerMap[msgId];
   }
 
@@ -352,12 +352,12 @@ class MsgEngine {
   }
 
   /// 消息处理器注册
-  void register(MsgProcessHandler msgHandler, int msgId) {
+  void register(MsgProcHandler msgHandler, int msgId) {
     if (msgHandler == null || msgId == 0) return;
     print('register: $msgId');
-    List<MsgProcessHandler> items = getHandlerList(msgId);
+    List<MsgProcHandler> items = getHandlerList(msgId);
     if (items == null) {
-      items = new List<MsgProcessHandler>();
+      items = new List<MsgProcHandler>();
       items.add(msgHandler);
       _msgHandlerMap[msgId] = items;
     } else {
@@ -391,7 +391,7 @@ class MsgEngine {
   }
 
   /// 注册消息
-  void regMsg(int msgId, MsgProcessHandlerCallBack msgProcess) {
+  void regMsg(int msgId, MsgProcHandlerCallBack msgProcess) {
     if (msgHandler == null) msgHandler = new MsgHandlerEvent(owner: this);
     msgHandler._eventList[msgId] = msgProcess;
     msgHandler.addMsgId(msgId);
