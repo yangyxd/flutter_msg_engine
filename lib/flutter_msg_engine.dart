@@ -367,6 +367,16 @@ class MsgEngine {
     }
   }
 
+  /// 消息处理器注册
+  void registers(MsgProcHandler msgHandler, List<int> msgIds) {
+    if (msgHandler == null || msgIds == null || msgIds.length == 0) return;
+    for (int i=0; i<msgIds.length; i++) {
+      int msgId = msgIds[i];
+      if (msgId == 0) continue;
+      register(msgHandler, msgId);
+    }
+  }
+
   /// 反注册消息处理器
   void unRegisterHandler(MsgHandler msgHandler) {
     if (msgHandler == null) return;
