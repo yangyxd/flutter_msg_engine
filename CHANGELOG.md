@@ -1,3 +1,7 @@
+## 0.0.3
+
+Bug repair.
+
 ## 0.0.2
 
 Add registers.
