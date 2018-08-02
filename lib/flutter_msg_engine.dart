@@ -115,7 +115,7 @@ class MsgHandlerBase implements MsgHandler {
   }
 
   /// 处理消息
-  void processMsg(MsgPack msg) {
+  void processMsg(MsgPack msg) async {
     if (onProcessMsg != null) onProcessMsg.processMsg(msg);
   }
 
@@ -347,7 +347,7 @@ class MsgEngine {
     return _msgHandlerMap[msgId];
   }
 
-  bool existHandler(List<MsgHandler> handlers, MsgHandler value) {
+  bool existHandler(List<MsgProcHandler> handlers, MsgProcHandler value) {
     return handlers.contains(value);
   }
 
@@ -378,14 +378,23 @@ class MsgEngine {
   }
 
   /// 反注册消息处理器
-  void unRegisterHandler(MsgHandler msgHandler) {
+  void unRegisterHandler(MsgProcHandler msgHandler) {
     if (msgHandler == null) return;
-    List<int> keys = msgHandler.msgIds;
-    if (keys == null || keys.length == 0) return;
-    for (int i = 0; i < keys.length; i++) {
-      int id = keys[i];
-      List<MsgHandler> items = _msgHandlerMap[id];
-      if (items != null) items.remove(msgHandler);
+    if (msgHandler is MsgHandler) {
+      List<int> keys = msgHandler.msgIds;
+      if (keys == null || keys.length == 0) return;
+      for (int i = 0; i < keys.length; i++) {
+        int id = keys[i];
+        List<MsgHandler> items = _msgHandlerMap[id];
+        if (items != null) items.remove(msgHandler);
+      }
+    } else {
+      List<int> keys = _msgHandlerMap.keys.toList();
+      for (int i=0; i< keys.length; i++) {
+        List<MsgProcHandler> items = _msgHandlerMap[keys[i]];
+        if (items == null) continue;
+        items.remove(msgHandler);
+      }
     }
   }
 
