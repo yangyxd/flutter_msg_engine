@@ -110,7 +110,7 @@ class MsgHandlerBase implements MsgHandler {
   final MsgProcHandler onProcessMsg;
 
   MsgHandlerBase({this.owner, List<int> msgIds, this.onProcessMsg}) {
-    this._msgIds == msgIds;
+    this._msgIds = msgIds;
     if (this._msgIds == null) this._msgIds = new List<int>();
   }
 
@@ -273,26 +273,28 @@ class MsgEngine {
   }
 
   bool __messageQueueProcessing = false;
+
   // 处理消息队列
   _messageQueueProcess() async {
     if (__messageQueueProcessing) return;
     __messageQueueProcessing = true;
     try {
-      int wref = 0;
+      int _ref = 0;
       while (true) {
         //print("msg process.");
         if (isPause || _msgQueue.isEmpty) {
           return;
         } else {
-          wref++;
-          if (wref > speedRatio) {
+          _ref++;
+          if (_ref > speedRatio) {
             if (!isDestroying) {
-              new Timer(const Duration(milliseconds: 20), () {
+              await Future.delayed(Duration(milliseconds: 20));
+              if (isDestroying || _msgQueue.isEmpty) {
                 __messageQueueProcessing = false;
-                if (!isDestroying) _messageQueueProcess();
-              });
+                return;
+              }
+              _ref = 0;
             }
-            return;
           }
 
           MsgPack msg = _msgQueue.first;

@@ -1,11 +1,19 @@
 name: flutter_msg_engine
-description: Flutter Message Engine..
-version: 0.0.3
+description: Flutter Message Engine. Register a message where you need it and send it anywhere in the future. It can be responded to and processed. Help application decoupling.
+version: 1.0.0
 author: yangyxd <yangyxd@126.com>
 homepage: https://github.com/yangyxd/flutter_msg_engine
 
+environment:
+  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  flutter: ">=0.1.4 <2.0.0"
+
 dependencies:
   flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
     sdk: flutter
 
 # For information on the generic Dart part of this file, see the
@@ -13,11 +21,8 @@ dependencies:
 
 # The following section is specific to Flutter.
 flutter:
-  plugin:
-    androidPackage: com.yangyxd.fluttermsgengine
-    pluginClass: FlutterMsgEnginePlugin
 
-  # To add assets to your plugin package, add an assets section, like this:
+  # To add assets to your package, add an assets section, like this:
   # assets:
   #  - images/a_dot_burr.jpeg
   #  - images/a_dot_ham.jpeg
@@ -28,7 +33,7 @@ flutter:
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
 
-  # To add custom fonts to your plugin package, add a fonts section here,
+  # To add custom fonts to your package, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
@@ -47,7 +52,3 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.io/custom-fonts/#from-packages
-
-environment:
-  sdk: ">=2.0.0-dev.28.0 <3.0.0"
-  flutter: ">=0.1.4 <2.0.0"

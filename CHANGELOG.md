@@ -1,3 +1,7 @@
+## 1.0.0
+
+Introduction to optimization and modification.
+
 ## 0.0.3
 
 Bug repair.
